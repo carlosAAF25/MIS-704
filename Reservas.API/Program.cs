@@ -8,8 +8,10 @@ using Reservas.Application.UseCases.Reservations.UpdateReservationStatus;
 using Reservas.Application.UseCases.Spaces.GetSpaces;
 using Reservas.Application.UseCases.Users.GetUsers;
 using Reservas.Domain.Repositories;
+using Reservas.Domain.Services;
 using Reservas.Infrastructure.Data;
 using Reservas.Infrastructure.Repositories;
+using Reservas.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +38,7 @@ builder.Services.AddScoped<UpdateReservationStatusHandler>();
 builder.Services.AddScoped<GetReservationByIdHandler>();
 builder.Services.AddScoped<GetSpacesHandler>();
 builder.Services.AddScoped<GetUsersHandler>();
+builder.Services.AddScoped<INotificationService, MockNotificationService>();
 
 var app = builder.Build();
 
