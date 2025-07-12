@@ -7,8 +7,8 @@ namespace Reservas.Domain.Repositories
 {
     public interface ISpaceRepository
     {
-        Task<Space> GetByIdAsync(Guid id);
         Task<IEnumerable<Space>> GetAllAsync();
+        Task<Space?> GetByIdAsync(Guid id);
         Task AddAsync(Space space);
     }
 }

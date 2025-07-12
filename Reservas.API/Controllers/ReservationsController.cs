@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Reservas.Application.UseCases.Reservations.CancelReservation;
 using Reservas.Application.UseCases.Reservations.CreateReservation;
+using Reservas.Application.UseCases.Reservations.GetReservationById;
 using Reservas.Application.UseCases.Reservations.GetReservations;
+using Reservas.Application.UseCases.Reservations.UpdateReservationStatus;
 
 namespace Reservas.API.Controllers
 {
@@ -14,16 +16,22 @@ namespace Reservas.API.Controllers
         private readonly CreateReservationHandler _createReservationHandler;
         private readonly GetReservationsHandler _getReservationsHandler;
         private readonly CancelReservationHandler _cancelReservationHandler;
+        private readonly UpdateReservationStatusHandler _updateReservationStatusHandler;
+        private readonly GetReservationByIdHandler _getReservationByIdHandler;
 
         public ReservationsController(
-            CreateReservationHandler createReservationHandler,
-            GetReservationsHandler getReservationsHandler,
-            CancelReservationHandler cancelReservationHandler
+            CreateReservationHandler createHandler,
+            GetReservationsHandler getHandler,
+            CancelReservationHandler cancelHandler,
+            UpdateReservationStatusHandler updateStatusHandler,
+            GetReservationByIdHandler getByIdHandler
         )
         {
-            _createReservationHandler = createReservationHandler;
-            _getReservationsHandler = getReservationsHandler;
-            _cancelReservationHandler = cancelReservationHandler;
+            _createReservationHandler = createHandler;
+            _getReservationsHandler = getHandler;
+            _cancelReservationHandler = cancelHandler;
+            _updateReservationStatusHandler = updateStatusHandler;
+            _getReservationByIdHandler = getByIdHandler;
         }
 
         [HttpPost]
@@ -50,12 +58,6 @@ namespace Reservas.API.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetReservationById(Guid id)
-        {
-            return Ok();
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetReservations([FromQuery] Guid? userId)
         {
@@ -73,6 +75,37 @@ namespace Reservas.API.Controllers
             {
                 await _cancelReservationHandler.HandleAsync(command);
                 return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("status")]
+        public async Task<IActionResult> UpdateStatus(
+            [FromBody] UpdateReservationStatusCommand command
+        )
+        {
+            try
+            {
+                await _updateReservationStatusHandler.HandleAsync(command);
+                return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetReservationById(Guid id)
+        {
+            try
+            {
+                var query = new GetReservationByIdQuery(id);
+                var reservation = await _getReservationByIdHandler.HandleAsync(query);
+                return Ok(reservation);
             }
             catch (InvalidOperationException ex)
             {

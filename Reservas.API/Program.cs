@@ -2,7 +2,10 @@ using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Reservas.Application.UseCases.Reservations.CancelReservation;
 using Reservas.Application.UseCases.Reservations.CreateReservation;
+using Reservas.Application.UseCases.Reservations.GetReservationById;
 using Reservas.Application.UseCases.Reservations.GetReservations;
+using Reservas.Application.UseCases.Reservations.UpdateReservationStatus;
+using Reservas.Application.UseCases.Spaces.GetSpaces;
 using Reservas.Domain.Repositories;
 using Reservas.Infrastructure.Data;
 using Reservas.Infrastructure.Repositories;
@@ -23,9 +26,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+builder.Services.AddScoped<ISpaceRepository, SpaceRepository>();
 builder.Services.AddScoped<CreateReservationHandler>();
 builder.Services.AddScoped<GetReservationsHandler>();
 builder.Services.AddScoped<CancelReservationHandler>();
+builder.Services.AddScoped<UpdateReservationStatusHandler>();
+builder.Services.AddScoped<GetReservationByIdHandler>();
+builder.Services.AddScoped<GetSpacesHandler>();
 
 var app = builder.Build();
 

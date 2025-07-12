@@ -6,9 +6,8 @@
     public DateTime StartDate { get; private set; }
     public DateTime EndDate { get; private set; }
 
-    public ReservationStatus Status { get; private set; } // Estado de la reserva
+    public ReservationStatus Status { get; private set; }
 
-    // Constructor
     public Reservation(Guid userId, Guid spaceId, DateTime startDate, DateTime endDate)
     {
         Id = Guid.NewGuid();
@@ -16,16 +15,29 @@
         SpaceId = spaceId;
         StartDate = startDate;
         EndDate = endDate;
-        Status = ReservationStatus.Pending; // Estado inicial por defecto
+        Status = ReservationStatus.Pending;
     }
 
-    // Método para cancelar
     public void Cancel()
     {
         if (Status == ReservationStatus.Cancelled)
             throw new InvalidOperationException("Reservation is already cancelled.");
 
         Status = ReservationStatus.Cancelled;
+    }
+
+    public void UpdateStatus(ReservationStatus newStatus)
+    {
+        if (Status == ReservationStatus.Cancelled)
+            throw new InvalidOperationException("Cannot update a cancelled reservation.");
+
+        if (Status != ReservationStatus.Pending)
+            throw new InvalidOperationException("Only pending reservations can be updated.");
+
+        if (newStatus == ReservationStatus.Pending || newStatus == Status)
+            throw new InvalidOperationException("Invalid status change.");
+
+        Status = newStatus;
     }
 
     public enum ReservationStatus

@@ -15,9 +15,9 @@ namespace Reservas.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Reservation>().Property(r => r.Status).HasConversion<string>();
+            modelBuilder.Entity<Space>().ToTable("Spaces");
             base.OnModelCreating(modelBuilder);
 
-            // User configuration
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(u => u.Id);
@@ -27,7 +27,6 @@ namespace Reservas.Infrastructure.Data
                 entity.Property(u => u.IsAdmin).IsRequired();
             });
 
-            // Space configuration
             modelBuilder.Entity<Space>(entity =>
             {
                 entity.HasKey(s => s.Id);
@@ -35,7 +34,6 @@ namespace Reservas.Infrastructure.Data
                 entity.Property(s => s.Description).HasMaxLength(250);
             });
 
-            // Reservation configuration
             modelBuilder.Entity<Reservation>(entity =>
             {
                 entity.HasKey(r => r.Id);
@@ -43,7 +41,6 @@ namespace Reservas.Infrastructure.Data
                 entity.Property(r => r.EndDate).IsRequired();
                 entity.Property(r => r.Status).IsRequired();
 
-                // Relationships
                 entity
                     .HasOne<User>()
                     .WithMany()
