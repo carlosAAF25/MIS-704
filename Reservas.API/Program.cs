@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Reservas.Application.UseCases.Reservations.CreateReservation;
 using Reservas.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ReservationsDbContext>(
     options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+builder.Services.AddScoped<CreateReservationHandler>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
