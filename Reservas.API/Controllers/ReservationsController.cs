@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Reservas.Application.UseCases.Reservations.CancelReservation;
 using Reservas.Application.UseCases.Reservations.CreateReservation;
+using Reservas.Application.UseCases.Reservations.GetReservations;
 
 namespace Reservas.API.Controllers
 {
@@ -9,11 +11,19 @@ namespace Reservas.API.Controllers
     [Route("api/[controller]")]
     public class ReservationsController : ControllerBase
     {
-        private readonly CreateReservationHandler _handler;
+        private readonly CreateReservationHandler _createReservationHandler;
+        private readonly GetReservationsHandler _getReservationsHandler;
+        private readonly CancelReservationHandler _cancelReservationHandler;
 
-        public ReservationsController(CreateReservationHandler handler)
+        public ReservationsController(
+            CreateReservationHandler createReservationHandler,
+            GetReservationsHandler getReservationsHandler,
+            CancelReservationHandler cancelReservationHandler
+        )
         {
-            _handler = handler;
+            _createReservationHandler = createReservationHandler;
+            _getReservationsHandler = getReservationsHandler;
+            _cancelReservationHandler = cancelReservationHandler;
         }
 
         [HttpPost]
@@ -23,7 +33,7 @@ namespace Reservas.API.Controllers
         {
             try
             {
-                var reservationId = await _handler.HandleAsync(command);
+                var reservationId = await _createReservationHandler.HandleAsync(command);
                 return CreatedAtAction(
                     nameof(GetReservationById),
                     new { id = reservationId },
@@ -40,12 +50,34 @@ namespace Reservas.API.Controllers
             }
         }
 
-        // Optional: implement GetReservationById for CreatedAtAction to work
         [HttpGet("{id}")]
         public IActionResult GetReservationById(Guid id)
         {
-            // Implementation pending
             return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetReservations([FromQuery] Guid? userId)
+        {
+            var query = new GetReservationsQuery { UserId = userId };
+            var reservations = await _getReservationsHandler.HandleAsync(query);
+            return Ok(reservations);
+        }
+
+        [HttpPut("cancel")]
+        public async Task<IActionResult> CancelReservation(
+            [FromBody] CancelReservationCommand command
+        )
+        {
+            try
+            {
+                await _cancelReservationHandler.HandleAsync(command);
+                return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
         }
     }
 }

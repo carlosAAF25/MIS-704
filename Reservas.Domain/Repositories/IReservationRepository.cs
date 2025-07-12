@@ -7,10 +7,11 @@ namespace Reservas.Domain.Repositories
 {
     public interface IReservationRepository
     {
-        Task<Reservation> GetByIdAsync(Guid id);
-        Task<IEnumerable<Reservation>> GetByUserIdAsync(Guid userId);
         Task AddAsync(Reservation reservation);
+        Task<bool> IsSpaceAvailable(Guid spaceId, DateTime startDate, DateTime endDate);
+        Task<IEnumerable<Reservation>> GetAllAsync();
+        Task<IEnumerable<Reservation>> GetByUserIdAsync(Guid userId);
+        Task<Reservation> GetByIdAsync(Guid reservationId);
         Task UpdateAsync(Reservation reservation);
-        Task<bool> IsSpaceAvailable(Guid spaceId, DateTime start, DateTime end);
     }
 }

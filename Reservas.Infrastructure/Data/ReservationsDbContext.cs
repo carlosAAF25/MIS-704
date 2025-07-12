@@ -14,6 +14,7 @@ namespace Reservas.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Reservation>().Property(r => r.Status).HasConversion<string>();
             base.OnModelCreating(modelBuilder);
 
             // User configuration
