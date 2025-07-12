@@ -1,13 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Reservas.Domain.Entities;
+﻿using Reservas.Domain.Entities;
 
 namespace Reservas.Domain.Repositories
 {
     public interface IUserRepository
     {
-        Task<User> GetByIdAsync(Guid id);
-        Task<User> GetByEmailAsync(string email);
+        Task<IEnumerable<User>> GetAllAsync();
+        Task<User?> GetByIdAsync(Guid id);
         Task AddAsync(User user);
     }
 }

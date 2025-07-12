@@ -16,6 +16,8 @@ namespace Reservas.Infrastructure.Data
         {
             modelBuilder.Entity<Reservation>().Property(r => r.Status).HasConversion<string>();
             modelBuilder.Entity<Space>().ToTable("Spaces");
+            modelBuilder.Entity<User>().ToTable("Users");
+
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<User>(entity =>
